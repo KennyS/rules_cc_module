@@ -34,6 +34,7 @@ _common_attrs = {
       executable = True,
       cfg = "exec",
   ),
+  "data": attr.label_list(allow_files = True),
   "deps": attr.label_list(),
   "copts": attr.string_list(),
 }
@@ -109,8 +110,12 @@ def _cc_module_impl(ctx):
       linking_context = linking_context
   )
   cc_info = cc_common.merge_cc_infos(cc_infos=[cc_info, impl_cc_info, cc_info_deps])
+  runfiles = ctx.runfiles(files = ctx.files.data)
+  all_targets = ctx.attr.deps + ctx.attr.data
+  for target in all_targets:
+      runfiles = runfiles.merge(target[DefaultInfo].default_runfiles)
   return [
-        DefaultInfo(files = depset(outputs)),
+        DefaultInfo(files = depset(outputs), runfiles = runfiles),
         cc_info,
         module_info,
   ]
@@ -191,8 +196,12 @@ def _cc_header_module_impl(ctx):
       compilation_context = hdr_compilation_context,
   )
   cc_info = cc_common.merge_cc_infos(cc_infos=[cc_info, cc_info_deps])
+  runfiles = ctx.runfiles(files = ctx.files.data)
+  all_targets = ctx.attr.deps + ctx.attr.data
+  for target in all_targets:
+      runfiles = runfiles.merge(target[DefaultInfo].default_runfiles)
   return [
-        DefaultInfo(files = depset(outputs)),
+        DefaultInfo(files = depset(outputs), runfiles = runfiles),
         cc_info,
         module_info,
   ]
@@ -249,8 +258,12 @@ def _cc_module_library_impl(ctx):
       linking_context = linking_context
   )
   cc_info = cc_common.merge_cc_infos(cc_infos=[cc_info, cc_info_deps])
+  runfiles = ctx.runfiles(files = ctx.files.data)
+  all_targets = ctx.attr.deps + ctx.attr.data
+  for target in all_targets:
+      runfiles = runfiles.merge(target[DefaultInfo].default_runfiles)
   return [
-        DefaultInfo(files = depset(outputs)),
+        DefaultInfo(files = depset(outputs), runfiles = runfiles),
         cc_info,
   ]
 
@@ -287,8 +300,13 @@ def  _cc_module_binary_impl(ctx):
                                            compilation_context = compilation_context)
   cc_module_link_action(ctx, objs, cc_info_deps.linking_context, exe)
 
+  runfiles = ctx.runfiles(files = ctx.files.data)
+  all_targets = ctx.attr.deps + ctx.attr.data
+  for target in all_targets:
+      runfiles = runfiles.merge(target[DefaultInfo].default_runfiles)
+
   return [
-      DefaultInfo(files = depset([exe]), executable=exe),
+      DefaultInfo(files = depset([exe]), executable=exe, runfiles = runfiles),
       CcInfo(
           compilation_context = compilation_context.compilation_context,
           linking_context = cc_info_deps.linking_context,
