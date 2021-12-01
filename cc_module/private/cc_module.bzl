@@ -37,6 +37,7 @@ _common_attrs = {
   "data": attr.label_list(allow_files = True),
   "deps": attr.label_list(),
   "copts": attr.string_list(),
+  "linkopts": attr.string_list(),
 }
 
 ###########################################################################################

@@ -25,7 +25,8 @@ def get_linker_and_args(ctx, cc_toolchain, feature_configuration, rpaths, output
         user_link_flags = user_link_flags,
         output_file = output_file,
     )
-    link_args = cc_common.get_memory_inefficient_command_line(
+    link_args = getattr(ctx.attr, "linkopts", [])
+    linkargs = link_args + cc_common.get_memory_inefficient_command_line(
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
         variables = link_variables,
