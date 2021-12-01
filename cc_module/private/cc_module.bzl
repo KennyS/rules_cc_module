@@ -289,6 +289,10 @@ def  _cc_module_binary_impl(ctx):
 
   return [
       DefaultInfo(files = depset([exe]), executable=exe),
+      CcInfo(
+          compilation_context = compilation_context.compilation_context,
+          linking_context = cc_info_deps.linking_context,
+      ),
   ]
 
 _cc_module_binary_attrs  = {
