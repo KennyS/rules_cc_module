@@ -303,3 +303,13 @@ cc_module_binary = rule(
     fragments = ["cpp"],
     executable = True,
 )
+
+cc_module_test = rule(
+    implementation = _cc_module_binary_impl,
+    attrs = dict(_common_attrs.items() + _cc_module_binary_attrs.items()),
+    toolchains = ["@bazel_tools//tools/cpp:toolchain_type"],
+    incompatible_use_toolchain_transition = True,
+    fragments = ["cpp"],
+    executable = True,
+    test = True,
+)
